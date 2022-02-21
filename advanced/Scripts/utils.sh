@@ -37,10 +37,10 @@ addOrEditKeyValPair() {
 #######################
 # returns FTL's current telnet API port
 #######################
-ftl_api_port(){
+getFTLAPIPort(){
   local -r FTLCONFFILE="/etc/pihole/pihole-FTL.conf"
   local -r DEFAULT_FTL_PORT=4711
-  local ftl_port
+  local ftl_api_port
 
   if [[ -f "$FTLCONFFILE" ]]; then
   # shellcheck disable=1090
@@ -48,13 +48,13 @@ ftl_api_port(){
       if [[ -n "$PORTFILE" ]]; then
           if [[ -s "$PORTFILE" ]]; then
               # -s: FILE exists and has a size greater than zero
-              ftl_port=$(<"$PORTFILE")
+              ftl_api_port=$(<"$PORTFILE")
               # Exploit prevention: unset the variable if there is malicious content
               # Verify that the value read from the file is numeric
-              [[ "$ftl_port" =~ [^[:digit:]] ]] && unset ftl_port
+              [[ "$ftl_api_port" =~ [^[:digit:]] ]] && unset ftl_api_port
           fi
       fi
   fi
 
-  echo "${ftl_port:=$DEFAULT_FTL_PORT}"
+  echo "${ftl_api_port:=$DEFAULT_FTL_PORT}"
 }
