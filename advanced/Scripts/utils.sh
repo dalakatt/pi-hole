@@ -49,7 +49,7 @@ getFTLAPIPort(){
   fi
 
   # if PORTFILE is not set in pihole-FTL.conf, use the default path
-  if [[ ! -n "$PORTFILE" ]]; then
+  if [[ -z "$PORTFILE" ]]; then
     PORTFILE="$DEFAULT_PORT_FILE"
   fi
 
