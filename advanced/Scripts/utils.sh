@@ -39,22 +39,28 @@ addOrEditKeyValPair() {
 #######################
 getFTLAPIPort(){
   local -r FTLCONFFILE="/etc/pihole/pihole-FTL.conf"
+  local -r DEFAULT_PORT_FILE="/run/pihole-FTL.port"
   local -r DEFAULT_FTL_PORT=4711
   local ftl_api_port
 
   if [[ -f "$FTLCONFFILE" ]]; then
   # shellcheck disable=1090
-      source "$FTLCONFFILE"
-      if [[ -n "$PORTFILE" ]]; then
-          if [[ -s "$PORTFILE" ]]; then
-              # -s: FILE exists and has a size greater than zero
-              ftl_api_port=$(<"$PORTFILE")
-              # Exploit prevention: unset the variable if there is malicious content
-              # Verify that the value read from the file is numeric
-              [[ "$ftl_api_port" =~ [^[:digit:]] ]] && unset ftl_api_port
-          fi
-      fi
+    source "$FTLCONFFILE"
   fi
 
+  # if PORTFILE is not set in pihole-FTL.conf, use the default path
+  if [[ ! -n "$PORTFILE" ]]; then
+    PORTFILE="$DEFAULT_PORT_FILE"
+  fi
+
+  if [[ -s "$PORTFILE" ]]; then
+    # -s: FILE exists and has a size greater than zero
+    ftl_api_port=$(<"$PORTFILE")
+    # Exploit prevention: unset the variable if there is malicious content
+    # Verify that the value read from the file is numeric
+    [[ "$ftl_api_port" =~ [^[:digit:]] ]] && unset ftl_api_port
+  fi
+
+  # echo the port found in the portfile or default to the default port
   echo "${ftl_api_port:=$DEFAULT_FTL_PORT}"
 }
